@@ -1,0 +1,61 @@
+<!DOCTYPE HTML>
+<html>
+
+<body>
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'login.css' %}"> 
+  <div class="wrapper">
+    <div class="container">
+      <h1>Welcome</h1>
+      <form action ="{% url 'register' %}" method="POST">
+        {% csrf_token %}
+        <input type="text" name="name" placeholder="Name" required>
+        <input type="text" name="email" placeholder="EmailID" required>
+        <input type="text" name="phonenumber" placeholder="Phone Number" required>
+        <input type="text" name="age" placeholder="Age" required>
+        <input type="text" name="state" placeholder="State" required>
+        <input type="text" name="city" placeholder="City" required>
+
+        <input type="text" name="types" list="data" placeholder="Who are you Student/Teacher">
+        <datalist id="data">
+          <option value="Student">Student
+          <option value="Teacher">Teacher
+          </datalist>
+        <input type="password" name="password" placeholder="Password" required>
+
+        <button type="submit">Register</button>
+        
+      </form>
+    </div>
+
+    <ul class="bg-bubbles">
+      <li></li>
+      <li></li>
+      <li></li>
+      <li></li>
+      <li></li>
+      <li></li>
+      <li></li>
+      <li></li>
+      <li></li>
+      <li></li>
+    </ul>
+
+  </div>
+</body>
+
+</html>
+<script>
+  const labels = document.querySelectorAll(".form-control label");
+
+  labels.forEach((label) => {
+    label.innerHTML = label.innerText
+      .split("")
+      .map(
+        (letter, idx) =>
+          `<span style="transition-delay:${idx * 50}ms">${letter}</span>`
+      )
+      .join("");
+  });
+
+</script>

@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Quiz Result</title>
+  </head>
+  <body>
+    <h1>Quiz Result</h1>
+    <p>You got {{ qscore }} out of {{ total_questions }} questions correct! {{score}}</p>
+    <p>Your percentage {{ percentage_correct }} </p>
+    <h3>Graph of Correct vs Incorrect Questions</h3>
+    <img src="{{ chart }}" />
+    <h3>Graph of Easy to Medium to Hard Questions</h3>
+    <img src="{{ chart1 }}"/>
+    <a href="index.html">Home</a>
+  </body>
+</html>

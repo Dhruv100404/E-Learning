@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Quiz</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.6.0/css/bootstrap.min.css" integrity="sha384-PDle/QlgIONtM1aqA2Qemk5gPOE7wFq8+Em+G/hmo5Iq0CCmYZLv3fVRDJ4MMwEA" crossorigin="anonymous">
+    <style>
+      body {
+  background-color: #03abff;
+}
+
+.container {
+  margin-top: 50px;
+  margin-left: 30px;
+  margin-right: 30px;
+  background-color: #fffffffa;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgb(30, 0, 255);
+}
+
+h1 {
+  text-align: center;
+  font-weight: bold;
+  margin-bottom: 30px;
+  color: #333;
+}
+
+.list-group {
+  margin-bottom: 30px;
+}
+
+.list-group-item {
+  border-radius: 10px;
+  margin-bottom: 10px;
+  background-color: #f7f7f7;
+  color: #333;
+  border-color: #333;
+}
+
+.list-group-item.active {
+  background-color: #333;
+  color: #fff;
+  border-color: #333;
+}
+
+.form-check-input {
+  margin-right: 10px;
+}
+
+button[type="submit"] {
+  display: block;
+  margin: 0 auto;
+  background-color: #333;
+  color: #fff;
+  border-color: #333;
+  border-radius: 10px;
+}
+
+button[type="submit"]:hover {
+  background-color: #fff;
+  color: #333;
+}
+
+#time-up {
+  background-color: #f00;
+  color: #fff;
+  border-color: #f00;
+  border-radius: 10px;
+  text-align: center;
+  font-weight: bold;
+  margin-top: 20px;
+  padding: 10px;
+}
+
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1 class="my-5">{{quiz_name}}</h1>
+      <hr>
+      <div id="timer"></div>
+      <div class="alert alert-danger" id="time-up" style="display: none;">
+        Time's up! Your answers have been submitted.
+      </div>      
+      <form method="POST" action="{% url 'calculate_result1' %}">
+        {% csrf_token %}
+        <ul class="list-group">
+          {% for question in questions %}
+          <li class="list-group-item">{{ question.Question }}[{{question.level}}]</li>
+          <ul class="list-group list-group-flush">
+            {% for answer in answers %}
+            {% if answer.question == question %}
+            <li class="list-group-item">
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="{{ answer.question.id }}" id="{{ answer.id }}" value="1">
+                <label class="form-check-label" for="{{ answer.id }}">
+                  {{ answer.option_1 }}
+                </label>
+              </div>
+            </li>
+            <li class="list-group-item">
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="{{ answer.question.id }}" id="{{ answer.id }}" value="2">
+                <label class="form-check-label" for="{{ answer.id }}">
+                  {{ answer.option_2 }}
+                </label>
+              </div>
+            </li>
+            <li class="list-group-item">
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="{{ answer.question.id }}" id="{{ answer.id }}" value="3">
+                <label class="form-check-label" for="{{ answer.id }}">
+                  {{ answer.option_3 }}
+                </label>
+              </div>
+            </li>
+            <li class="list-group-item">
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="{{ answer.question.id }}" id="{{ answer.id }}" value="4">
+                <label class="form-check-label" for="{{ answer.id }}">
+                  {{ answer.option_4 }}
+                </label>
+              </div>
+            </li>
+            {% endif %}
+            {% endfor %}
+          </ul>
+          {% endfor %}
+        </ul>
+        <hr>
+        <button type="submit" class="btn btn-primary mt-3" id="submit-button"">Submit Answers</button>
+      </form>
+        
+        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/popper.js@2.9.3/dist/umd/popper.min.js" integrity="sha384-e3fzCeTvBaaCiqndvJxrWTP+eqBnRBU9RfJ7V5UzgxyS7V5ue5syk+tJvRLUW4D4" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.6.0/js/bootstrap.min.js" integrity="sha384-ODm12pe/QzKYrX6tzGdTwKoO6wfsrp4V4wCXnKt0hXQiaOksdQRVvoxMh8T35K2I" crossorigin="anonymous"></script>
+        
+        
+        <script>
+          // Record the start time of the test
+          var startTime = new Date();
+          
+          // Set the time limit for the quiz in seconds
+          var timeLimit = 300; // 5 minutes
+            
+          // Get the timer element from the HTML
+          var timerElement = document.getElementById("timer");
+            
+          // Start the timer
+          var timeRemaining = timeLimit;
+          var timerInterval = setInterval(function() {
+            // Update the timer element with the remaining time
+            timerElement.innerHTML = "Time remaining: " + timeRemaining + " seconds";
+            
+            // Decrement the time remaining
+            timeRemaining--;
+            
+            // Check if the time has run out
+            if (timeRemaining < 0) {
+              // Stop the timer
+              clearInterval(timerInterval);
+              
+              // Disable the submit button and show the time's up message
+              document.getElementById("submit-button").disabled = true;
+              document.getElementById("time-up").style.display = "block";
+              
+              // Submit the test with a duration of 300 seconds
+              submitTest(300);
+            }
+          }, 1000);
+          </script>
